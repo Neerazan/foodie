@@ -1,8 +1,9 @@
 import { images, offers } from "@/constants";
-import { FlatList, Image, Pressable, View, Text } from "react-native";
+import { FlatList, Image, Pressable, View, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Fragment } from "react";
 import cn from 'clsx'
+import CartButton from "@/components/CartButton";
 
 export default function Index() {
   return (
@@ -19,7 +20,7 @@ export default function Index() {
                 style={{
                   backgroundColor: item.color
                 }}
-                android_ripple={{color: "ffffff22"}}
+                android_ripple={{ color: "ffffff22" }}
               >
                 {({ pressed }) => (
                   <Fragment>
@@ -48,6 +49,25 @@ export default function Index() {
           )
         }}
         contentContainerClassName="pb-28 px-5"
+        ListHeaderComponent={() => (
+          <View className="flex-between flex-row w-full my-5 px-5">
+            <View className="flext-start">
+              <Text className="paragraph-bold text-primary">
+                DELIVER TO
+              </Text>
+              <TouchableOpacity className="flex-center flex-row gap-x-1 mt-0.5">
+                <Text className="paragraph-bold text-dark-100">Pokhara</Text>
+                <Image
+                  source={images.arrowDown}
+                  className="size-3"
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
+            </View>
+
+            <CartButton />
+          </View>
+        )}
       >
 
       </FlatList>
