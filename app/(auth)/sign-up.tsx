@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Alert, Button, Text, View } from 'react-native'
 import CustomInput from '@/components/CustomInput'
 import CustomButton from '@/components/CustomButton'
+import { createUser } from '@/lib/appwrite'
 
 const SignUp = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -13,11 +14,13 @@ const SignUp = () => {
   });
 
   const submit = async () => {
-    if (!form.email || !form.password || !form.name) return Alert.alert('Please enter valid email address and password');
+    const { name, email, password } = form;
+
+    if (!email || !password || !name) return Alert.alert('Please enter valid email address and password');
+
     setIsSubmitting(true);
     try {
-      Alert.alert('Success', 'User signed up successfully')
-      setIsSubmitting(false);
+      await createUser({name, email, password})
       router.replace('/')
     } catch (error:any) {
       Alert.alert('Error', error.message)
@@ -34,7 +37,7 @@ const SignUp = () => {
         value={form.name}
         label='Full Name'
         onChangeText={(name) => setForm({...form, name: name})}
-        keyboardType='email-address'
+        keyboardType='default'
       />
       <CustomInput
         placeholder='Enter you email'
@@ -50,7 +53,7 @@ const SignUp = () => {
         onChangeText={(password) => setForm({ ...form, password: password })}
         secureTextEntry={true}
       />
-      <CustomButton title='Sign In' style='mt-3' onPress={submit}/>
+      <CustomButton title='Sign Up' style='mt-3' onPress={submit} isLoading={isSubmitting} />
       
       <View className='flex justify-center mt-5 flex-row gap-2'>
         <Text className='base-regular text-gray-100'>
