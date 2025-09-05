@@ -2,6 +2,7 @@ import { SplashScreen, Stack } from "expo-router";
 import './global.css';
 import { useFonts } from 'expo-font';
 import { useEffect } from "react";
+import useAuthStore from "@/store/auth.store";
 
 export default function RootLayout() {
   const [fontsLoaded, error] = useFonts({
@@ -12,6 +13,8 @@ export default function RootLayout() {
     Quicksand_800: require("../assets/fonts/Quicksand-Light.ttf"),
   });
 
+  const { isLoading, fetchAuthenticatedUser } = useAuthStore();
+
   useEffect(() => {
     if (error) throw error;
 
@@ -20,6 +23,11 @@ export default function RootLayout() {
     }
   }, [fontsLoaded, error])
   
+  useEffect(() => {
+    fetchAuthenticatedUser();
+  }, [])
+
+  if(!fontsLoaded || isLoading) return null;
 
   return <Stack
     screenOptions={{

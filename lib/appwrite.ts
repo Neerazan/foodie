@@ -31,8 +31,6 @@ export const createUser = async ({ email, password, name }: CreateUserPrams) => 
 
     if (!newAccount) throw Error;
 
-    await signIn({ email, password });
-
     const avatarUrl = avatars.getInitialsURL(name);
 
     return await databases.createRow({
@@ -53,7 +51,8 @@ export const createUser = async ({ email, password, name }: CreateUserPrams) => 
 
 export const signIn = async ({ email, password }: SignInParams) => {
   try {
-    const session = await account.createEmailPasswordSession({email, password});
+    const session = await account.createEmailPasswordSession({ email, password });
+    console.log("SIGNIN: ", session);
   } catch (e) {
     throw new Error(e as string);
   }
