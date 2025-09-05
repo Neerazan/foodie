@@ -1,6 +1,6 @@
-import { getCurrentUser } from '@/lib/appwrite';
-import { User } from '@/type'
-import { create } from 'zustand'
+import { create } from 'zustand';
+import { User } from "@/type";
+import { getCurrentUser } from "@/lib/appwrite";
 
 type AuthState = {
   isAuthenticated: boolean;
@@ -8,8 +8,8 @@ type AuthState = {
   isLoading: boolean;
 
   setIsAuthenticated: (value: boolean) => void;
-  setUser: (value: User | null) => void;
-  setIsLoading: (value: boolean) => void;
+  setUser: (user: User | null) => void;
+  setLoading: (loading: boolean) => void;
 
   fetchAuthenticatedUser: () => Promise<void>;
 }
@@ -17,26 +17,27 @@ type AuthState = {
 const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: false,
   user: null,
-  isLoading: false,
+  isLoading: true,
 
   setIsAuthenticated: (value) => set({ isAuthenticated: value }),
-  setUser: (value) => set({ user: value }),
-  setIsLoading: (value) => set({ isLoading: value }),
+  setUser: (user) => set({ user }),
+  setLoading: (value) => set({ isLoading: value }),
 
   fetchAuthenticatedUser: async () => {
     set({ isLoading: true });
+
     try {
       const user = await getCurrentUser();
-      // console.log('Fetch Authenticated User: ', JSON.stringify(user, null, 2));
-      if (user) set({ isAuthenticated: true, user: user as unknown as User });
+
+      if (user) set({ isAuthenticated: true, user: user as unknown as User })
       else set({ isAuthenticated: false, user: null });
-    } catch (error) {
-      console.log('Fetch Authenticated User error: ', error);
-      set({ isAuthenticated: false, user: null });
+    } catch (e) {
+      console.log('fetchAuthenticatedUser error', e);
+      set({ isAuthenticated: false, user: null })
     } finally {
       set({ isLoading: false });
     }
-  },
+  }
 }))
 
-export default useAuthStore
+export default useAuthStore;

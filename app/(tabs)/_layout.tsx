@@ -4,7 +4,8 @@ import useAuthStore from '@/store/auth.store';
 
 const TabLayout = () => {
   const { isAuthenticated } = useAuthStore();
-  console.log('isAuthenticated::::: ', isAuthenticated);  
+  console.log("Tab layout called>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+  console.log("Is Authenticated: ", isAuthenticated)
 
   if (isAuthenticated) return <Slot />
 

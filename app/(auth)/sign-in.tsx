@@ -1,56 +1,68 @@
-import { Link, router } from 'expo-router'
-import React, { useState } from 'react'
-import { Alert, Text, View } from 'react-native'
-import CustomInput from '@/components/CustomInput'
-import CustomButton from '@/components/CustomButton'
-import { signIn } from '@/lib/appwrite'
+import { View, Text, Alert } from 'react-native'
+import { Link, router } from "expo-router";
+import CustomInput from "@/components/CustomInput";
+import CustomButton from "@/components/CustomButton";
+import { useState } from "react";
+import { signIn } from "@/lib/appwrite";
+import useAuthStore from '@/store/auth.store';
+import { User } from '@/type';
 
 const SignIn = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [form, setForm] = useState({
-    email: '',
-    password: '',
-  });
+  const [form, setForm] = useState({ email: '', password: '' });
+  const { setIsAuthenticated, setLoading, setUser } = useAuthStore();
 
   const submit = async () => {
     const { email, password } = form;
-    if (!email || !password) return Alert.alert('Please enter valid email address and password');
-    
-    setIsSubmitting(true);
+
+    if (!email || !password) return Alert.alert('Error', 'Please enter valid email address & password.');
+
+    setIsSubmitting(true)
+
     try {
-      await signIn({email, password})
-      router.replace('/')
-    } catch (error:any) {
-      Alert.alert('Error', error.message)
+      setLoading(true);
+      const user = await signIn({ email, password });
+      setIsAuthenticated(true);
+      setUser(user as unknown as User);
+      setLoading(false);      
+      router.replace('/');
+    } catch (error: any) {
+      Alert.alert('Error', error.message);
     } finally {
       setIsSubmitting(false);
     }
   }
 
-
   return (
-    <View className='gap-1 bg-white rounded-lg p-5 mt-5'>
+    <View className="gap-10 bg-white rounded-lg p-5 mt-5">
       <CustomInput
-        placeholder='Enter you email'
+        placeholder="Enter your email"
         value={form.email}
-        label='Email'
-        onChangeText={(text) => setForm({...form, email: text})}
-        keyboardType='email-address'
+        onChangeText={(text) => setForm((prev) => ({ ...prev, email: text }))}
+        label="Email"
+        keyboardType="email-address"
       />
       <CustomInput
-        placeholder='Enter you password'
+        placeholder="Enter your password"
         value={form.password}
-        label='Password'
-        onChangeText={(password) => setForm({ ...form, password: password })}
+        onChangeText={(text) => setForm((prev) => ({ ...prev, password: text }))}
+        label="Password"
         secureTextEntry={true}
       />
-      <CustomButton title='Sign In' style='mt-3' onPress={submit} isLoading={isSubmitting} />
-      
-      <View className='flex justify-center mt-5 flex-row gap-2'>
-        <Text className='base-regular text-gray-100'>
+
+      <CustomButton
+        title="Sign In"
+        isLoading={isSubmitting}
+        onPress={submit}
+      />
+
+      <View className="flex justify-center mt-5 flex-row gap-2">
+        <Text className="base-regular text-gray-100">
           Don&apos;t have an account?
         </Text>
-        <Link href={'/sign-up'} className='base-bold text-primary'>Sign Up</Link>
+        <Link href="/sign-up" className="base-bold text-primary">
+          Sign Up
+        </Link>
       </View>
     </View>
   )
