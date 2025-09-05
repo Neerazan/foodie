@@ -1,29 +1,11 @@
 import { images, offers } from "@/constants";
-import { FlatList, Image, Pressable, View, Text, TouchableOpacity, Alert } from "react-native";
+import { FlatList, Image, Pressable, View, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Fragment } from "react";
 import cn from 'clsx'
 import CartButton from "@/components/CartButton";
-import CustomButton from "@/components/CustomButton";
-import { signOut } from "@/lib/appwrite";
-import useAuthStore from "@/store/auth.store";
-import { router } from "expo-router";
 
 export default function Index() {
-  const { setIsAuthenticated, setLoading, setUser } = useAuthStore();
-
-  const logOut = async () => {
-    try {
-      setLoading(true);
-      await signOut();
-      setIsAuthenticated(false);
-      setUser(null);
-      router.replace('/sign-in');
-    } catch (error: any) {
-      Alert.alert('Error', error.message);
-    }
-  }
-
   return (
     <SafeAreaView className="flex-1 bg-white">
       <FlatList
@@ -85,13 +67,6 @@ export default function Index() {
 
             <CartButton />
           </View>
-        )}
-        ListFooterComponent={() => (
-          <CustomButton
-            style="mt-5"
-            title="logout"
-            onPress={logOut}
-          />
         )}
       >
       </FlatList>

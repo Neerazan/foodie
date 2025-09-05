@@ -6,9 +6,9 @@ import './global.css';
 import useAuthStore from "@/store/auth.store";
 
 export default function RootLayout() {
-  const { isLoading, fetchAuthenticatedUser, isAuthenticated } = useAuthStore();
-  console.log("Main layout called>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-  console.log("Is Authenticated Main: ", isAuthenticated)
+  const { isLoading, fetchAuthenticatedUser } = useAuthStore();
+  // console.log("Main layout called>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+  // console.log("Is Authenticated Main: ", isAuthenticated)
 
   const [fontsLoaded, error] = useFonts({
     "QuickSand-Bold": require('../assets/fonts/Quicksand-Bold.ttf'),
