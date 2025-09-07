@@ -3,19 +3,15 @@ import React from 'react'
 import CustomButton from "@/components/CustomButton";
 import { signOut } from "@/lib/appwrite";
 import useAuthStore from "@/store/auth.store";
-import { router } from "expo-router";
 
 const Profile = () => {
 
-  const { setIsAuthenticated, setLoading, setUser } = useAuthStore();
+  const { logout } = useAuthStore();
 
   const logOut = async () => {
     try {
-      setLoading(true);
       await signOut();
-      setIsAuthenticated(false);
-      setUser(null);
-      router.replace('/sign-in');
+      logout();
     } catch (error: any) {
       Alert.alert('Error', error.message);
     }
