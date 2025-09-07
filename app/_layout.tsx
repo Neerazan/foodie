@@ -1,14 +1,13 @@
-import {SplashScreen, Stack} from "expo-router";
 import { useFonts } from 'expo-font';
-import { useEffect} from "react";
+import { SplashScreen, Stack, router } from "expo-router";
+import { useEffect } from "react";
+import { ActivityIndicator, View } from 'react-native';
 
-import './global.css';
 import useAuthStore from "@/store/auth.store";
+import './global.css';
 
 export default function RootLayout() {
-  const { isLoading, fetchAuthenticatedUser } = useAuthStore();
-  // console.log("Main layout called>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-  // console.log("Is Authenticated Main: ", isAuthenticated)
+  const { isLoading, isAuthenticated, fetchAuthenticatedUser } = useAuthStore();
 
   const [fontsLoaded, error] = useFonts({
     "QuickSand-Bold": require('../assets/fonts/Quicksand-Bold.ttf'),
@@ -24,10 +23,35 @@ export default function RootLayout() {
   }, [fontsLoaded, error]);
 
   useEffect(() => {
-    fetchAuthenticatedUser()
-  }, []);
+    fetchAuthenticatedUser();
+  }, [fetchAuthenticatedUser]);
 
-  if(!fontsLoaded || isLoading) return null;
+  useEffect(() => {
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        router.replace('/(auth)/sign-in');
+      } else {
+        router.replace('/(tabs)');
+      }
+    }
+  }, [isAuthenticated, isLoading]);
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  if(!fontsLoaded) {
+    return null;
+  }
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <ActivityIndicator size="large" color="#FE8C00" />
+      </View>
+    );
+  }
+
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(auth)" redirect={isAuthenticated} />
+      <Stack.Screen name="(tabs)" redirect={!isAuthenticated} />
+    </Stack>
+  );
 };

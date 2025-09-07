@@ -1,5 +1,5 @@
 import { CreateUserPrams, SignInParams } from "@/type"
-import { Account, Avatars, Client, TablesDB, ID, Query } from "react-native-appwrite"
+import { Account, Avatars, Client, ID, Query, TablesDB } from "react-native-appwrite"
 
 export const appwriteConfig = {
   endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT!,
@@ -11,9 +11,9 @@ export const appwriteConfig = {
 
 export const client: Client = new Client()
 client
-.setEndpoint(appwriteConfig.endpoint)
-.setProject(appwriteConfig.projectId)
-.setPlatform(appwriteConfig.platform)
+  .setEndpoint(appwriteConfig.endpoint)
+  .setProject(appwriteConfig.projectId)
+  .setPlatform(appwriteConfig.platform)
 
 
 export const account: Account = new Account(client)
@@ -82,9 +82,13 @@ export const getCurrentUser = async () => {
 
 export const signOut = async () => {
   try {
-    await account.deleteSession({sessionId: 'current'})
+    const sessions = await account.listSessions();
+    if (sessions.sessions.length > 0) {
+      await account.deleteSessions();
+    }
   } catch (error) {
     console.log(error);
-    throw new Error(error as string);
+    // Don't throw the error here, just log it
+    // This allows the UI to update even if the session deletion fails
   }
 }

@@ -1,6 +1,6 @@
-import { create } from 'zustand';
+import { getCurrentUser, signOut } from "@/lib/appwrite";
 import { User } from "@/type";
-import { getCurrentUser } from "@/lib/appwrite";
+import { create } from 'zustand';
 
 type AuthState = {
   isAuthenticated: boolean;
@@ -40,11 +40,24 @@ const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  logout: () => set({
-    isAuthenticated: false,
-    user: null,
-    isLoading: false,
-  })
+  logout: async () => {
+    try {
+      // First update the local state
+      set({
+        isAuthenticated: false,
+        user: null,
+        isLoading: true,
+      });
+
+      // Then attempt to clear the server session
+      await signOut();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      // Ensure loading is set to false regardless of the outcome
+      set({ isLoading: false });
+    }
+  }
 }))
 
 export default useAuthStore;

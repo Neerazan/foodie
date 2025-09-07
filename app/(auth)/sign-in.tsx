@@ -25,11 +25,11 @@ const SignIn = () => {
       setIsAuthenticated(true);
       setUser(user as unknown as User);
       setLoading(false);      
-      router.replace('/');
     } catch (error: any) {
       Alert.alert('Error', error.message);
     } finally {
       setIsSubmitting(false);
+      setLoading(false);
     }
   }
 
